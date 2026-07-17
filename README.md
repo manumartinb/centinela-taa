@@ -121,6 +121,19 @@ momentum sacan la cartera a defensivos/liquidez antes de lo peor.
 El combo tiene mejor Sharpe, menor caída y mejor Calmar que **cualquiera** de sus
 componentes por separado: la diversificación de *estilos de decisión* es real.
 
+### ¿Por qué estos 6 activos? (el caso de DBC)
+
+Pregunta frecuente: *"DBC ha rendido regular toda su vida, ¿por qué lo tenemos?"*.
+Porque el combo **no lo compra-y-mantiene: lo cronometra**. DBC solo se carga
+cuando su momentum es positivo, y ahí rinde +7.9%/año (vs 5.8% de media). Es un
+seguro de inflación: cuesta un puntito en los años buenos, pero en 2022 —cuando
+la bolsa hizo −18% y los bonos cayeron con ella— fue **la única pata en verde**.
+
+![Aporte de DBC por año](charts/dbc_contribution.png)
+
+Quitarlo empeora el peor año en 2.9 pp. Análisis completo (y por qué **TLT** sí es
+el activo marginal): **[docs/POR_QUE_ESTOS_ACTIVOS.md](docs/POR_QUE_ESTOS_ACTIVOS.md)**.
+
 ---
 
 ## 7. Batería de robustez (resumen)
@@ -212,8 +225,9 @@ centinela-taa/
 ├── docs/
 │   ├── FORMULA.md             ← fórmula completa paso a paso
 │   ├── ROBUSTEZ.md            ← batería estadística completa
-│   └── REBALANCEO.md          ← guía de rebalanceo con todas las tablas
-├── charts/                    ← 8 gráficos (generados por scripts/make_charts_repo.py)
+│   ├── REBALANCEO.md          ← guía de rebalanceo con todas las tablas
+│   └── POR_QUE_ESTOS_ACTIVOS.md ← el caso de DBC (y por qué TLT es el marginal)
+├── charts/                    ← 9 gráficos (generados por scripts/make_charts_repo.py)
 ├── data/
 │   ├── etf_adjclose.csv       ← precios ajustados de los 7 ETFs (2015–2026)
 │   ├── centinela_daily_returns.csv  ← retornos diarios netos del combo + equity
