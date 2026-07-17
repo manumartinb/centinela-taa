@@ -1,0 +1,57 @@
+//@version=6
+// =====================================================================================
+// SNIPPET COMBO EXACTO  -  pegar DENTRO de tu script TAA original
+// (el que ya calcula Defense First, HAA, Blend 50/50 y el regimen SPY-or-Cash).
+//
+// El combo validado = MEDIA de las 3 carteras, rebalanceada SEMANAL. Como tu script
+// ya tiene los pesos EXACTOS de cada estrategia por ETF, el combo bit-exacto es solo
+// promediarlos. Sustituye los placeholders por TUS variables de peso.
+// =====================================================================================
+
+// ---- 1) PESOS POR ESTRATEGIA (usa tus variables reales; deben sumar 1 cada estrategia) ----
+// Defense First (cols "QQQ/SHV/TLT/DBC/GLD Allocation"):
+df_QQQ = QQQ_Allocation, df_SHV = SHV_Allocation, df_TLT = TLT_Allocation
+df_DBC = DBC_Allocation, df_GLD = GLD_Allocation, df_SPY = 0.0
+
+// Blend 50/50: QQQ = "C QQQ allocation (Blend 50/50)"; la defensa (1-QQQ) se reparte con
+// la MISMA proporcion SHV/TLT/DBC/GLD que Defense First (asi lo valido el estudio):
+defSum = df_SHV + df_TLT + df_DBC + df_GLD
+scB    = defSum > 0 ? (1.0 - C_QQQ_Blend) / defSum : 0.0
+bl_QQQ = C_QQQ_Blend
+bl_SHV = defSum > 0 ? df_SHV*scB : (1.0 - C_QQQ_Blend)
+bl_TLT = df_TLT*scB, bl_DBC = df_DBC*scB, bl_GLD = df_GLD*scB, bl_SPY = 0.0
+
+// SPY-or-Cash: regimen (1 = RISK-ON) -> 100% SPY, si no 100% SHV(cash):
+sc_SPY = Regimen_SoloSPY_o_Nada        // tu columna 0/1
+sc_SHV = 1.0 - sc_SPY
+sc_QQQ = 0.0, sc_TLT = 0.0, sc_DBC = 0.0, sc_GLD = 0.0
+
+// ---- 2) COMBO = media de las 3 (bit-exacto al backtest validado) ----
+cbQQQ = (df_QQQ + bl_QQQ + sc_QQQ) / 3.0
+cbSHV = (df_SHV + bl_SHV + sc_SHV) / 3.0
+cbTLT = (df_TLT + bl_TLT + sc_TLT) / 3.0
+cbDBC = (df_DBC + bl_DBC + sc_DBC) / 3.0
+cbGLD = (df_GLD + bl_GLD + sc_GLD) / 3.0
+cbSPY = (df_SPY + bl_SPY + sc_SPY) / 3.0
+
+// ---- 3) REBALANCEO SEMANAL: solo ACTUAS (mandas ordenes) cuando cambia la semana ----
+rebalHoy = timeframe.change("W")       // true en la 1a barra de cada semana ISO
+// (mensual -> timeframe.change("M");  diario -> true siempre)
+
+// ---- 4) Tabla de pesos objetivo del combo (los % que llevarias hoy) ----
+f_pct(x) => str.tostring(x*100.0, "#.0") + "%"
+var table tc = table.new(position.bottom_right, 2, 8, border_width=1)
+if barstate.islast
+    table.cell(tc, 0, 0, rebalHoy ? "COMBO - REBALANCEAR HOY" : "COMBO (mantener)", text_color=color.white, bgcolor=rebalHoy ? color.new(color.orange,0) : color.new(color.teal,0))
+    table.cell(tc, 1, 0, "peso", text_color=color.white, bgcolor=color.new(color.teal,0))
+    names = array.from("QQQ","SPY","SHV","TLT","DBC","GLD")
+    vals  = array.from(cbQQQ, cbSPY, cbSHV, cbTLT, cbDBC, cbGLD)
+    for i = 0 to 5
+        table.cell(tc, 0, i+1, array.get(names,i), text_color=color.silver)
+        table.cell(tc, 1, i+1, f_pct(array.get(vals,i)), text_color=color.white)
+    table.cell(tc, 0, 7, "Suma", text_color=color.silver)
+    table.cell(tc, 1, 7, f_pct(cbQQQ+cbSPY+cbSHV+cbTLT+cbDBC+cbGLD), text_color=color.white)
+
+// ---- 5) (OPCIONAL) convertir a strategy() para backtest exacto ----
+// Cambia la 1a linea del script a: strategy("Combo semanal", overlay=true, ...)
+// y en cada rebalHoy manda strategy.order/strategy.entry con los pesos cb* (via % de equity).

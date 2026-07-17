@@ -1,0 +1,213 @@
+//@version=6
+// =====================================================================================
+// TAA COMBO "CENTINELA"  =  1/3 Defense First + 1/3 Blend 50/50 + 1/3 SPY-or-Cash
+// Config canonica: chequeo SEMANAL + banda de deriva 8%.
+//
+// REPO (documentacion completa, backtests, robustez, graficos, instrucciones):
+//   https://github.com/manumartinb/centinela-taa
+//
+// EXACTO (verificado vs CSV de TradingView): momentum "13612W"/4 (21/63/126/252),
+// regimen RISK-ON = mom(SPY)>0 AND mom(TIP)>0, Blend QQQ = (HAA+DefenseFirst)/2.
+// RECONSTRUCCION (ajustable): sizing fraccional QQQ de Defense First (inputs qCap/qTilt).
+// Para el combo BIT-EXACTO usa el snippet sobre tu script original.
+//
+// Auditoria 2026-07-10: F1 anti-NaN (ready exige 7 momentos + recuperacion + guarda gsum),
+// F2 solo calcula en grafico DIARIO, F3 opcion "solo cierre confirmado" (no repinta).
+// =====================================================================================
+indicator("TAA Combo (1/3 DefenseFirst + 1/3 Blend + 1/3 SPY-Cash)", overlay=false, precision=2)
+
+// ------------------------------- Inputs: simbolos ------------------------------------
+gS = "Simbolos (ETF reales; aplicar en grafico DIARIO)"
+symQQQ = input.symbol("QQQ", "Ofensivo (equity)",          group=gS)
+symSHV = input.symbol("SHV", "Defensivo: cash",            group=gS)
+symTLT = input.symbol("TLT", "Defensivo: bonos largos",    group=gS)
+symDBC = input.symbol("DBC", "Defensivo: materias primas", group=gS)
+symGLD = input.symbol("GLD", "Defensivo: oro",             group=gS)
+symSPY = input.symbol("SPY", "S1 equity (SPY-or-Cash)",    group=gS)
+symTIP = input.symbol("TIP", "Canario (regimen)",          group=gS)
+
+gM = "Momentum 13612W (Keller)"
+l1  = input.int(21,  "Lookback 1m (dias)",  group=gM)
+l3  = input.int(63,  "Lookback 3m (dias)",  group=gM)
+l6  = input.int(126, "Lookback 6m (dias)",  group=gM)
+l12 = input.int(252, "Lookback 12m (dias)", group=gM)
+
+gC = "Reconstruccion asignacion QQQ (ajustable)"
+qCap  = input.float(0.5,  "Tope QQQ ofensivo",       minval=0.0, maxval=1.0, step=0.0625, group=gC)
+qTilt = input.float(1.0,  "Sesgo QQQ (fuerza rel.)", minval=0.1, maxval=5.0, step=0.1,    group=gC)
+
+gR = "Vista / rebalanceo"
+rebFreq     = input.string("Semanal", "Frecuencia chequeo", options=["Diario","Semanal","Mensual"], group=gR)
+vista       = input.string("Posiciones (barras)", "Que dibujar", options=["Posiciones (barras)","Equity simulada"], group=gR)
+showBg      = input.bool(false, "Fondo verde en RISK-ON (solo en Equity)", group=gR)
+confirmOnly = input.bool(true,  "Solo cierre confirmado (no repintar)", group=gR)
+
+gB = "Banda de deriva (regla: chequeo + banda)"
+bandOn     = input.bool(true, "Rebalancear solo si te desvias > umbral", group=gB)
+bandThresh = input.float(8.0, "Umbral de deriva (%)", minval=0.0, maxval=50.0, step=0.5, group=gB)
+canaryEps  = input.float(0.02, "Aviso canario en el filo si |mom TIP| <", minval=0.0, maxval=0.2, step=0.005, group=gB)
+
+// ------------------------------- Precios / momentum ----------------------------------
+f_close(s) => request.security(s, timeframe.period, close, lookahead=barmerge.lookahead_off)
+cQQQ = f_close(symQQQ), cSHV = f_close(symSHV), cTLT = f_close(symTLT), cDBC = f_close(symDBC)
+cGLD = f_close(symGLD), cSPY = f_close(symSPY), cTIP = f_close(symTIP)
+
+f_mom(c) => (12.0*(c/c[l1]-1.0) + 4.0*(c/c[l3]-1.0) + 2.0*(c/c[l6]-1.0) + 1.0*(c/c[l12]-1.0)) / 4.0
+mQQQ = f_mom(cQQQ), mSHV = f_mom(cSHV), mTLT = f_mom(cTLT), mDBC = f_mom(cDBC)
+mGLD = f_mom(cGLD), mSPY = f_mom(cSPY), mTIP = f_mom(cTIP)
+
+// F1: exige los 7 momentos (evita NaN poisoning). F2: solo calcula en grafico diario.
+ready = timeframe.isdaily and bar_index > l12 and not na(mQQQ) and not na(mSHV) and not na(mTLT) and not na(mDBC) and not na(mGLD) and not na(mSPY) and not na(mTIP)
+
+// ------------------------------- Regimen (EXACTO) ------------------------------------
+riskOn = mSPY > 0 and mTIP > 0        // S1: SPY-or-Cash
+canary = mTIP > 0 and mQQQ > 0        // gate ofensivo del sleeve QQQ
+
+// -------------------- Reparto defensivo: peso ~ max(0,mom); si nada -> SHV ------------
+posSHV = math.max(0.0, mSHV), posTLT = math.max(0.0, mTLT)
+posDBC = math.max(0.0, mDBC), posGLD = math.max(0.0, mGLD)
+dsum = posSHV + posTLT + posDBC + posGLD
+dwSHV = dsum > 0 ? posSHV/dsum : 1.0
+dwTLT = dsum > 0 ? posTLT/dsum : 0.0
+dwDBC = dsum > 0 ? posDBC/dsum : 0.0
+dwGLD = dsum > 0 ? posGLD/dsum : 0.0
+
+// -------------------- Sizing QQQ (HAA binario / DefenseFirst fraccional) --------------
+posQ   = math.max(0.0, mQQQ)
+qShare = (posQ*qTilt + dsum) > 0 ? (posQ*qTilt) / (posQ*qTilt + dsum) : 0.0
+qDEF   = canary ? math.min(qCap, qShare) : 0.0     // Defense First (fraccional, reconstruido)
+qHAA   = canary ? 1.0 : 0.0                        // HAA (binario)
+qBLEND = (qHAA + qDEF) / 2.0                        // Blend 50/50 (EXACTO: media de A y B)
+
+// ------------------------------- Carteras por estrategia -----------------------------
+s1_SPY = riskOn ? 1.0 : 0.0
+s1_SHV = riskOn ? 0.0 : 1.0
+s2_QQQ = qDEF
+s2_SHV = (1.0-qDEF)*dwSHV, s2_TLT = (1.0-qDEF)*dwTLT, s2_DBC = (1.0-qDEF)*dwDBC, s2_GLD = (1.0-qDEF)*dwGLD
+s3_QQQ = qBLEND
+s3_SHV = (1.0-qBLEND)*dwSHV, s3_TLT = (1.0-qBLEND)*dwTLT, s3_DBC = (1.0-qBLEND)*dwDBC, s3_GLD = (1.0-qBLEND)*dwGLD
+
+// ------------------------------- COMBO (media de las 3) ------------------------------
+cbQQQ = (s2_QQQ + s3_QQQ) / 3.0
+cbSPY = (s1_SPY) / 3.0
+cbSHV = (s1_SHV + s2_SHV + s3_SHV) / 3.0
+cbTLT = (s2_TLT + s3_TLT) / 3.0
+cbDBC = (s2_DBC + s3_DBC) / 3.0
+cbGLD = (s2_GLD + s3_GLD) / 3.0
+
+doReb = rebFreq == "Diario" ? true : rebFreq == "Semanal" ? timeframe.change("W") : timeframe.change("M")
+
+// ------------------- Motor: deriva de pesos + banda + equity (leakage-free) ----------
+rQQQ = cQQQ/cQQQ[1]-1.0, rSHV = cSHV/cSHV[1]-1.0, rTLT = cTLT/cTLT[1]-1.0
+rDBC = cDBC/cDBC[1]-1.0, rGLD = cGLD/cGLD[1]-1.0, rSPY = cSPY/cSPY[1]-1.0
+var float wQ=0.0, wSH=0.0, wTL=0.0, wDB=0.0, wGL=0.0, wSP=0.0
+var bool  started = false
+var float eq = 1.0
+var float devPct = na
+if ready
+    if started
+        port = wQ*nz(rQQQ) + wSH*nz(rSHV) + wTL*nz(rTLT) + wDB*nz(rDBC) + wGL*nz(rGLD) + wSP*nz(rSPY)
+        eq := eq * (1.0 + port)                     // pesos de ayer -> retorno de hoy (sin leakage)
+        gQ = wQ*(1+nz(rQQQ)), gSH = wSH*(1+nz(rSHV)), gTL = wTL*(1+nz(rTLT))
+        gDB = wDB*(1+nz(rDBC)), gGL = wGL*(1+nz(rGLD)), gSP = wSP*(1+nz(rSPY))
+        gsum = gQ+gSH+gTL+gDB+gGL+gSP
+        if gsum > 0                                  // F1: guarda anti-NaN (evita 0/0)
+            wQ := gQ/gsum, wSH := gSH/gsum, wTL := gTL/gsum, wDB := gDB/gsum, wGL := gGL/gsum, wSP := gSP/gsum
+    gap = started ? (math.abs(wQ-cbQQQ)+math.abs(wSH-cbSHV)+math.abs(wTL-cbTLT)+math.abs(wDB-cbDBC)+math.abs(wGL-cbGLD)+math.abs(wSP-cbSPY))/2.0 : 1.0
+    devPct := gap * 100.0
+    // F1: rebalanceo en arranque, recuperacion si devPct=NaN, o dia de chequeo con deriva > umbral
+    wantReb = (not started) or na(devPct) or (doReb and (not bandOn or devPct > bandThresh))
+    if wantReb
+        wQ := cbQQQ, wSH := cbSHV, wTL := cbTLT, wDB := cbDBC, wGL := cbGLD, wSP := cbSPY
+        started := true
+
+// ------------------- F3: latch de valores CONFIRMADOS (no repinta) -------------------
+confirmBar = barstate.isconfirmed or not confirmOnly
+var float dvQQQ = na
+var float dvSPY = na
+var float dvSHV = na
+var float dvTLT = na
+var float dvDBC = na
+var float dvGLD = na
+var float dvHAA = na
+var float dvDEF = na
+var float dvBL  = na
+var float dvDev = na
+var float dvEq  = na
+var float dvTip = na
+var bool  dvRisk = false
+if ready and confirmBar
+    dvQQQ := cbQQQ, dvSPY := cbSPY, dvSHV := cbSHV, dvTLT := cbTLT, dvDBC := cbDBC, dvGLD := cbGLD
+    dvHAA := qHAA, dvDEF := qDEF, dvBL := qBLEND, dvDev := devPct, dvEq := eq, dvRisk := riskOn, dvTip := mTIP
+dispOK = not na(dvSHV)
+canaryEdge = dispOK and math.abs(dvTip) < canaryEps   // canario TIP pegado a cero -> regimen fragil
+
+// ------------------------------- Dibujo: posiciones apiladas o equity ----------------
+f_pct(x) => str.tostring(x*100.0, "#.0") + "%"
+showPos = vista == "Posiciones (barras)"
+a1 = dispOK ? dvQQQ*100.0 : na
+a2 = dispOK ? a1 + dvSPY*100.0 : na
+a3 = dispOK ? a2 + dvSHV*100.0 : na
+a4 = dispOK ? a3 + dvTLT*100.0 : na
+a5 = dispOK ? a4 + dvDBC*100.0 : na
+a6 = dispOK ? a5 + dvGLD*100.0 : na
+colQQQ = #ab87ff, colSPY = #2bd4a0, colSHV = #8894a5, colTLT = #6db1ff, colDBC = #ffa657, colGLD = #f5c518
+// areas apiladas: SOLO en el panel (fuera de la data window para no confundir con alturas)
+plot(showPos ? a6 : na, "GLD (stack)", color=colGLD, style=plot.style_area, display=display.pane)
+plot(showPos ? a5 : na, "DBC (stack)", color=colDBC, style=plot.style_area, display=display.pane)
+plot(showPos ? a4 : na, "TLT (stack)", color=colTLT, style=plot.style_area, display=display.pane)
+plot(showPos ? a3 : na, "SHV (stack)", color=colSHV, style=plot.style_area, display=display.pane)
+plot(showPos ? a2 : na, "SPY (stack)", color=colSPY, style=plot.style_area, display=display.pane)
+plot(showPos ? a1 : na, "QQQ (stack)", color=colQQQ, style=plot.style_area, display=display.pane)
+plot(showPos ? na : dvEq, "Equity (indicativa)", color=color.teal, linewidth=2, display=display.pane)
+// pesos REALES por ETF: solo en la data window / status line (estos SI suman 100%)
+plot(dispOK ? dvQQQ*100.0 : na, "QQQ peso %", color=colQQQ, display=display.data_window)
+plot(dispOK ? dvSPY*100.0 : na, "SPY peso %", color=colSPY, display=display.data_window)
+plot(dispOK ? dvSHV*100.0 : na, "SHV peso %", color=colSHV, display=display.data_window)
+plot(dispOK ? dvTLT*100.0 : na, "TLT peso %", color=colTLT, display=display.data_window)
+plot(dispOK ? dvDBC*100.0 : na, "DBC peso %", color=colDBC, display=display.data_window)
+plot(dispOK ? dvGLD*100.0 : na, "GLD peso %", color=colGLD, display=display.data_window)
+bgcolor(showBg and not showPos and dispOK and dvRisk ? color.new(color.green, 90) : na)
+
+// ------------------------------- Alertas (sobre valores confirmados) -----------------
+flipOn   = dispOK and confirmBar and dvRisk and not dvRisk[1]
+flipOff  = dispOK and confirmBar and not dvRisk and dvRisk[1]
+needReb  = dispOK and dvDev > bandThresh
+rebToday = ready and confirmBar and doReb and (not bandOn or dvDev > bandThresh)
+alertcondition(flipOn,          "TAA -> RISK-ON",       "TAA Combo: RISK-ON (entrar en bolsa). Revisa la tabla.")
+alertcondition(flipOff,         "TAA -> RISK-OFF",      "TAA Combo: RISK-OFF (a la defensiva). Revisa la tabla.")
+alertcondition(ta.crossover(dvDev, bandThresh), "TAA deriva > umbral", "TAA Combo: tu cartera se desvio mas del umbral del objetivo.")
+alertcondition(rebToday,        "TAA rebalancear ahora","TAA Combo: dia de chequeo y desviado > umbral. Rebalancea a la tabla.")
+alertcondition(canaryEdge and not canaryEdge[1], "TAA canario en el filo", "TAA Combo: canario TIP pegado a cero (|mom|<umbral). Regimen FRAGIL: confirma con el script EXACTO antes de mover.")
+if rebToday and barstate.isconfirmed
+    alert("TAA REBAL -> QQQ " + f_pct(dvQQQ) + "  SPY " + f_pct(dvSPY) + "  SHV " + f_pct(dvSHV) + "  TLT " + f_pct(dvTLT) + "  DBC " + f_pct(dvDBC) + "  GLD " + f_pct(dvGLD), alert.freq_once_per_bar_close)
+
+// ------------------------------- Tabla de pesos objetivo -----------------------------
+var table t = table.new(position.top_right, 2, 15, border_width=1, frame_width=1, frame_color=color.gray)
+if barstate.islast
+    hdr = color.new(color.teal, 0), bg = color.new(#11151c, 0), tx = color.white, tx2 = color.new(color.silver, 0)
+    table.cell(t, 0, 0, "TAA COMBO  (chequeo " + rebFreq + ")", text_color=tx, bgcolor=hdr, text_size=size.small)
+    regBg = canaryEdge ? color.new(color.orange, 0) : (dispOK and dvRisk ? color.new(color.green,20) : color.new(color.red,25))
+    table.cell(t, 1, 0, (dispOK and dvRisk ? "RISK-ON" : "RISK-OFF") + (canaryEdge ? " !FILO" : ""), text_color=tx, bgcolor=regBg, text_size=size.small)
+    rows = array.from("QQQ","SPY","SHV (cash)","TLT","DBC","GLD")
+    vals = array.from(dvQQQ, dvSPY, dvSHV, dvTLT, dvDBC, dvGLD)
+    for i = 0 to 5
+        table.cell(t, 0, i+1, array.get(rows,i), text_color=tx2, bgcolor=bg, text_size=size.small, text_halign=text.align_left)
+        table.cell(t, 1, i+1, dispOK ? f_pct(array.get(vals,i)) : "-", text_color=tx, bgcolor=bg, text_size=size.small)
+    table.cell(t, 0, 7, "Suma", text_color=tx2, bgcolor=bg, text_size=size.small, text_halign=text.align_left)
+    table.cell(t, 1, 7, dispOK ? f_pct(dvQQQ+dvSPY+dvSHV+dvTLT+dvDBC+dvGLD) : "-", text_color=tx, bgcolor=bg, text_size=size.small)
+    table.cell(t, 0, 8, "Desviacion", text_color=tx2, bgcolor=bg, text_size=size.small, text_halign=text.align_left)
+    table.cell(t, 1, 8, dispOK ? str.tostring(dvDev, "#.0")+"%" : "-", text_color=needReb ? color.orange : tx, bgcolor=bg, text_size=size.small)
+    table.cell(t, 0, 9, "ACCION (banda " + str.tostring(bandThresh, "#.#") + "%)", text_color=tx2, bgcolor=bg, text_size=size.small, text_halign=text.align_left)
+    table.cell(t, 1, 9, dispOK ? (needReb ? "REBALANCEAR" : "mantener") : "-", text_color=color.white, bgcolor=needReb ? color.new(color.orange,0) : color.new(color.gray,35), text_size=size.small)
+    table.cell(t, 0, 10, "QQQ  A/B/Blend", text_color=tx2, bgcolor=bg, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(t, 1, 10, dispOK ? f_pct(dvHAA)+" / "+f_pct(dvDEF)+" / "+f_pct(dvBL) : "-", text_color=tx, bgcolor=bg, text_size=size.tiny)
+    warn = not timeframe.isdaily ? "PON GRAFICO EN 1D" : (not dispOK ? "cargando 252d..." : "OK")
+    table.cell(t, 0, 11, "Estado", text_color=tx2, bgcolor=bg, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(t, 1, 11, warn, text_color=timeframe.isdaily and dispOK ? color.lime : color.orange, bgcolor=bg, text_size=size.tiny)
+    table.cell(t, 0, 12, "equity sim (indic.)", text_color=tx2, bgcolor=bg, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(t, 1, 12, dispOK ? "x"+str.tostring(dvEq, "#.00") : "-", text_color=tx, bgcolor=bg, text_size=size.tiny)
+    table.cell(t, 0, 13, "Canario mom(TIP)", text_color=tx2, bgcolor=bg, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(t, 1, 13, dispOK ? str.tostring(dvTip, "#.###") + (canaryEdge ? "  EN EL FILO -> ver EXACTO" : "") : "-", text_color=canaryEdge ? color.orange : tx, bgcolor=bg, text_size=size.tiny)
+    table.cell(t, 0, 14, "Docs", text_color=tx2, bgcolor=bg, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(t, 1, 14, "github.com/manumartinb/centinela-taa", text_color=tx2, bgcolor=bg, text_size=size.tiny)
