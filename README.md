@@ -211,9 +211,18 @@ evita el viernes (te tragas el fin de semana recién rebalanceado).
   emite las tres sub-estrategias.
 
 ⚠️ **Regla de oro:** el indicador autónomo reconstruye una pieza (el sizing
-fraccional de Defense First, correlación diaria 0.85 con el exacto). Cerca de
-`momentum(TIP) ≈ 0` puede discrepar del exacto — el propio indicador lo avisa
-(`!FILO`). Para decisiones con dinero real, confirma con el cálculo exacto.
+fraccional de Defense First, correlación diaria 0.85 con el exacto). Su régimen
+coincide con el exacto el **99.2% de los días**; el ~1% restante ocurre cuando
+`momentum(TIP) ≈ 0` — y el propio indicador lo avisa (`!FILO`). Para decisiones
+con dinero real, confirma con el cálculo exacto.
+
+### ¿Y en Composer Trade?
+
+Existe un port aproximado listo para importar ([composer/CENTINELA_symphony.json](composer/CENTINELA_symphony.json)),
+con su guía y sus límites en **[docs/COMPOSER.md](docs/COMPOSER.md)**. Advertencia:
+Composer no puede expresar el momentum multi-ventana ni el reparto proporcional —
+la réplica de esa lógica rinde varios puntos por debajo del combo puro. Backtestear
+dentro de Composer antes de usar.
 
 ---
 
@@ -226,7 +235,10 @@ centinela-taa/
 │   ├── FORMULA.md             ← fórmula completa paso a paso
 │   ├── ROBUSTEZ.md            ← batería estadística completa
 │   ├── REBALANCEO.md          ← guía de rebalanceo con todas las tablas
-│   └── POR_QUE_ESTOS_ACTIVOS.md ← el caso de DBC (y por qué TLT es el marginal)
+│   ├── POR_QUE_ESTOS_ACTIVOS.md ← el caso de DBC (y por qué TLT es el marginal)
+│   └── COMPOSER.md            ← port a Composer Trade (límites y guía)
+├── composer/
+│   └── CENTINELA_symphony.json ← symphony importable en Composer (aproximación)
 ├── charts/                    ← 9 gráficos (generados por scripts/make_charts_repo.py)
 ├── data/
 │   ├── etf_adjclose.csv       ← precios ajustados de los 7 ETFs (2015–2026)

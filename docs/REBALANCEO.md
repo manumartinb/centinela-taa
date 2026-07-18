@@ -8,17 +8,20 @@ justifica cada pieza de esa regla con los números, y da la rutina paso a paso.
 Mismo combo, misma ventana (2015–2026), distintas cadencias de chequeo, con tres
 niveles de coste por rotación:
 
-| Frecuencia | Coste | CAGR | Sharpe | Sortino | MaxDD | Rotación/año |
-|---|---|---:|---:|---:|---:|---:|
-| Diaria | 5 pb | 13.3% | 1.44 | 1.77 | −9.3% | 17.5x |
-| Diaria | 10 pb | 12.4% | 1.35 | 1.65 | −9.3% | 17.5x |
-| Diaria | 20 pb | 10.4% | 1.15 | 1.42 | −9.9% | 17.5x |
-| **Semanal** | 5 pb | 13.5% | 1.44 | 1.75 | −11.2% | 6.9x |
-| **Semanal** | **10 pb** | **13.1%** | **1.40** | **1.70** | **−11.4%** | **6.9x** |
-| **Semanal** | 20 pb | 12.3% | 1.33 | 1.61 | −11.7% | 6.9x |
-| Mensual | 5 pb | 11.6% | 1.23 | 1.49 | −11.2% | 3.1x |
-| Mensual | 10 pb | 11.4% | 1.21 | 1.47 | −11.3% | 3.1x |
-| Mensual | 20 pb | 11.0% | 1.18 | 1.43 | −11.6% | 3.1x |
+*(Pesos EXACTOS; chequeo = primer día de cada periodo; diaria sin banda, semanal y
+mensual con banda 8% — la convención canónica. Recalculado en auditoría 2026-07-18.)*
+
+| Frecuencia | Coste | CAGR | Sharpe | MaxDD | Operaciones/año |
+|---|---|---:|---:|---:|---:|
+| Diaria | 5 pb | 13.3% | 1.44 | −9.3% | ~252 |
+| Diaria | 10 pb | 12.4% | 1.35 | −9.3% | ~252 |
+| Diaria | 20 pb | 10.4% | 1.15 | −9.9% | ~252 |
+| **Semanal + banda 8%** | 5 pb | 13.4% | 1.44 | −9.1% | ~23 |
+| **Semanal + banda 8%** | **10 pb** | **13.0%** | **1.41** | **−9.1%** | **~23** |
+| **Semanal + banda 8%** | 20 pb | 12.3% | 1.34 | −9.1% | ~23 |
+| Mensual + banda 8% | 5 pb | 11.6% | 1.23 | −14.2% | ~9 |
+| Mensual + banda 8% | 10 pb | 11.5% | 1.21 | −14.2% | ~9 |
+| Mensual + banda 8% | 20 pb | 11.2% | 1.18 | −14.2% | ~9 |
 
 **Lecturas:**
 - **Diaria**: solo gana con costes irreales (5 pb). A costes normales, las
@@ -54,29 +57,32 @@ desviación = ½ · Σ_activos | peso_actual − peso_objetivo |
 actuar solo si desviación > banda
 ```
 
-Barrido del umbral (chequeo semanal, neto 10 pb):
+Barrido del umbral sobre los pesos EXACTOS (chequeo semanal, neto 10 pb;
+recalculado en auditoría 2026-07-18):
 
-| Banda | Sharpe | Operaciones/año | Peor año |
-|---:|---:|---:|---:|
-| 0% (siempre) | 1.33 | 52 | positivo |
-| 3% | 1.33 | 42 | positivo |
-| 5% | 1.32 | 36 | positivo |
-| **8%** | **1.35** | **28** | **positivo** |
-| 10% | 1.33 | 24 | positivo |
-| 12% | 1.34 | 22 | positivo |
-| 15% | 1.34 | 19 | positivo |
-| 20% | 1.33 | 16 | **−1.2%** |
-| 30% | 1.20 | 13 | **−1.8%** |
+| Banda | Sharpe | CAGR | MaxDD | Operaciones/año | Peor año |
+|---:|---:|---:|---:|---:|---:|
+| 0% (siempre) | 1.40 | 12.9% | −9.2% | 52 | −2.3% |
+| 3% | 1.40 | 12.9% | −9.2% | 45 | −2.3% |
+| 5% | 1.40 | 12.9% | −9.1% | 32 | −2.5% |
+| **8%** | **1.41** | **13.0%** | **−9.1%** | **23** | **−2.1%** |
+| 10% | 1.44 | 13.3% | −9.1% | 18 | −2.3% |
+| 12% | 1.44 | 13.3% | −9.3% | 16 | −2.2% |
+| 15% | 1.45 | 13.5% | −9.4% | 14 | −2.4% |
+| 20% | 1.42 | 13.1% | −9.3% | 12 | **−3.6%** |
+| 30% | 1.41 | 13.4% | −10.2% | 10 | **−3.5%** |
 
 **Lecturas:**
-- Entre **5% y 15%** hay una meseta plana: el valor exacto da igual (señal de que
-  no está sobreajustado). El 8% está en el centro.
-- La banda **recorta las operaciones a la mitad** (52 → ~23-28/año) sin coste de
-  rendimiento → menos comisiones, menos impuestos, menos trabajo.
-- **No pasar del 15%**: a partir de ~20% dejas la cartera derivar demasiado, te
-  pierdes cambios de régimen y el peor año se vuelve negativo.
-- Verificado además por walk-forward: re-elegir la banda cada año con solo datos
-  pasados da el mismo resultado que dejarla fija en 8% (ver ROBUSTEZ.md §3).
+- Entre **0% y 15%** hay una meseta (Sharpe 1.40–1.45): el valor exacto da igual —
+  señal de que la banda no está sobreajustada. Las diferencias dentro de la meseta
+  (8 vs 10 vs 15) son ruido muestral; el walk-forward lo confirma (re-elegir la
+  banda cada año con solo datos pasados da lo mismo que fijarla — ROBUSTEZ.md §3).
+- La banda **recorta las operaciones a la mitad o más** (52 → 23 con el 8%; → 14
+  con el 15%) sin coste de rendimiento → menos comisiones, impuestos y trabajo.
+- **A partir de ~20% el peor año se degrada** (−2.1% → −3.6%): dejas la cartera
+  derivar demasiado y te pierdes cambios de régimen. No pasar del 15%.
+- El **8% es el default canónico** (validado también en el barrido de la
+  reconstrucción, donde la meseta 5–15% se repite con niveles de Sharpe menores).
 
 ## 4. La rutina operativa completa
 

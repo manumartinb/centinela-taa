@@ -1,18 +1,37 @@
 //@version=6
 // =====================================================================================
 // TAA COMBO "CENTINELA"  =  1/3 Defense First + 1/3 Blend 50/50 + 1/3 SPY-or-Cash
-// Config canonica: chequeo SEMANAL + banda de deriva 8%.
+// v1.2 (2026-07-18) - auditado. Config canonica: chequeo SEMANAL + banda deriva 8%.
 //
 // REPO (documentacion completa, backtests, robustez, graficos, instrucciones):
 //   https://github.com/manumartinb/centinela-taa
 //
-// EXACTO (verificado vs CSV de TradingView): momentum "13612W"/4 (21/63/126/252),
-// regimen RISK-ON = mom(SPY)>0 AND mom(TIP)>0, Blend QQQ = (HAA+DefenseFirst)/2.
-// RECONSTRUCCION (ajustable): sizing fraccional QQQ de Defense First (inputs qCap/qTilt).
-// Para el combo BIT-EXACTO usa el snippet sobre tu script original.
+// ------------------------------ INSTRUCCIONES DE USO --------------------------------
+// 1) Aplica este indicador en un grafico DIARIO (1D), sobre SPY o QQQ (asi la ultima
+//    vela siempre es la de hoy). Fuera de 1D no calcula (Estado: PON GRAFICO EN 1D).
+// 2) RUTINA (2 min/semana): un dia fijo (mejor MIERCOLES o JUEVES; evita viernes),
+//    tras el cierre, mira la TABLA:
+//      - Filas QQQ/SPY/SHV/TLT/DBC/GLD = pesos objetivo de HOY (suman 100%).
+//      - Fila ACCION: "mantener" -> no toques nada. "REBALANCEAR" -> ajusta tu
+//        cuenta a los pesos objetivo. (La fila se enciende cuando la Desviacion
+//        supera la banda; EJECUTA solo en tu dia fijo de chequeo.)
+// 3) AVISO !FILO (naranja): el canario TIP esta pegado a cero -> el regimen es
+//    FRAGIL y este indicador puede discrepar del calculo EXACTO (coinciden el
+//    ~99% de los dias; el !FILO marca el ~1% restante). Ese dia, confirma con el
+//    script EXACTO antes de mover dinero.
+// 4) IMPORTANTE - que es este indicador: una RECONSTRUCCION fiel (correlacion
+//    diaria 0.85 con el combo exacto). El regimen, el momentum 13612W/4 y el
+//    Blend=(HAA+DefenseFirst)/2 son EXACTOS (verificados vs la fuente); el sizing
+//    fraccional de QQQ en Defense First es aproximado (inputs qCap/qTilt). Para
+//    ORDENES con dinero real usa el combo BIT-EXACTO: snippet
+//    TAA_Combo_EXACTO_snippet.pine sobre tu script original (ver repo, pine/).
+// 5) ALERTAS: crea en TradingView las alertas "TAA rebalancear ahora" (te manda
+//    los pesos ya calculados), "TAA -> RISK-ON/OFF" y "TAA canario en el filo".
 //
-// Auditoria 2026-07-10: F1 anti-NaN (ready exige 7 momentos + recuperacion + guarda gsum),
-// F2 solo calcula en grafico DIARIO, F3 opcion "solo cierre confirmado" (no repinta).
+// Fixes auditados: F1 anti-NaN (ready exige 7 momentos + recuperacion + guarda gsum),
+// F2 solo grafico DIARIO, F3 "solo cierre confirmado" (no repinta, ON por defecto).
+// Backtest de la estrategia EXACTA (no de esta reconstruccion): CAGR 13.0%,
+// Sharpe 1.41, MaxDD -9.1% (2015-2026, semanal+banda8, net 10bps). Ver repo.
 // =====================================================================================
 indicator("TAA Combo (1/3 DefenseFirst + 1/3 Blend + 1/3 SPY-Cash)", overlay=false, precision=2)
 
@@ -172,8 +191,8 @@ bgcolor(showBg and not showPos and dispOK and dvRisk ? color.new(color.green, 90
 // ------------------------------- Alertas (sobre valores confirmados) -----------------
 flipOn   = dispOK and confirmBar and dvRisk and not dvRisk[1]
 flipOff  = dispOK and confirmBar and not dvRisk and dvRisk[1]
-needReb  = dispOK and dvDev > bandThresh
-rebToday = ready and confirmBar and doReb and (not bandOn or dvDev > bandThresh)
+needReb  = dispOK and dvDev > bandThresh                              // condicion de deriva (cualquier dia)
+rebToday = ready and confirmBar and doReb and (not bandOn or dvDev > bandThresh)   // dia de chequeo Y deriva>banda -> ACTUAR
 alertcondition(flipOn,          "TAA -> RISK-ON",       "TAA Combo: RISK-ON (entrar en bolsa). Revisa la tabla.")
 alertcondition(flipOff,         "TAA -> RISK-OFF",      "TAA Combo: RISK-OFF (a la defensiva). Revisa la tabla.")
 alertcondition(ta.crossover(dvDev, bandThresh), "TAA deriva > umbral", "TAA Combo: tu cartera se desvio mas del umbral del objetivo.")

@@ -124,3 +124,9 @@ Mejor Sharpe, MaxDD y Calmar que cualquier componente: la mezcla aporta de verda
    Regla operativa: decidir con el cálculo exacto; el indicador avisa (`!FILO`).
 5. **OOS corto**: 2025–2026 (~1.5 años). El Sharpe OOS 1.94 es pequeño-N.
 6. Costes modelados planos (10 pb/rotación); sin fiscalidad ni slippage extremo.
+7. **Reconstrucción residual dentro del "exacto"**: la fuente da los pesos exactos
+   de Defense First completos y el peso QQQ exacto de las tres estrategias, pero
+   NO el desglose defensivo de la sub-estrategia Blend — ese se reconstruye
+   proporcional al reparto de Defense First (supuesto razonable y documentado en
+   `scripts/backtest_taa.py`). Afecta solo a cómo se reparte la fracción defensiva
+   de ⅓ de la cartera; el nivel de riesgo (QQQ/SPY vs defensa) es exacto.
