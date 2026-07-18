@@ -1,0 +1,545 @@
+{
+  "id": "079a94a2-e87d-49ee-b112-ecf5e3c6718a",
+  "step": "root",
+  "name": "CENTINELA (TAA Combo: 1/3 SPY-Cash + 1/3 Defense First + 1/3 Blend)",
+  "children": [
+    {
+      "id": "4467ad7d-a7cb-40c5-99ec-6253f26db776",
+      "step": "wt-cash-equal",
+      "children": [
+        {
+          "id": "effdc3b1-a650-4a35-bb1c-07a70a8c2807",
+          "step": "if",
+          "children": [
+            {
+              "id": "da98b81e-5178-4791-912c-acaf8030fce9",
+              "step": "if-child",
+              "children": [
+                {
+                  "id": "f2af9198-8657-482f-b75c-aa68467260ee",
+                  "step": "if",
+                  "children": [
+                    {
+                      "id": "ad845f83-e491-45a8-ac78-ad43d2c68282",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "7531aeaa-b125-4a68-a5aa-ca8a92b45c74",
+                          "step": "asset",
+                          "ticker": "SPY"
+                        }
+                      ],
+                      "is-else-condition?": false,
+                      "lhs-fn": "cumulative-return",
+                      "lhs-fn-params": {
+                        "window": 21
+                      },
+                      "lhs-val": "SPY",
+                      "comparator": "gt",
+                      "rhs-fixed-value?": true,
+                      "rhs-val": "0"
+                    },
+                    {
+                      "id": "d7e4c1af-dac1-407e-84b9-4ec1fe33a558",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "0caeacbb-d051-4051-9707-710c2e847eff",
+                          "step": "asset",
+                          "ticker": "SHV"
+                        }
+                      ],
+                      "is-else-condition?": true
+                    }
+                  ]
+                }
+              ],
+              "is-else-condition?": false,
+              "lhs-fn": "cumulative-return",
+              "lhs-fn-params": {
+                "window": 21
+              },
+              "lhs-val": "TIP",
+              "comparator": "gt",
+              "rhs-fixed-value?": true,
+              "rhs-val": "0"
+            },
+            {
+              "id": "27fa7b18-1a1c-46a8-91a1-78e563efeee1",
+              "step": "if-child",
+              "children": [
+                {
+                  "id": "95e5a209-46ff-4e38-9364-a126b7cb7c26",
+                  "step": "asset",
+                  "ticker": "SHV"
+                }
+              ],
+              "is-else-condition?": true
+            }
+          ]
+        },
+        {
+          "id": "deffc6d5-5f9e-4ccb-b204-6d60e69f0e06",
+          "step": "wt-cash-equal",
+          "children": [
+            {
+              "id": "2c2b1516-e584-4468-9554-f5613a1e2ab0",
+              "step": "if",
+              "children": [
+                {
+                  "id": "6ab86d75-20a2-4082-bef1-0b1d0290728b",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "c0269920-7d31-42f4-956e-4d1d4db03758",
+                      "step": "if",
+                      "children": [
+                        {
+                          "id": "6d1983f2-3e6d-4794-a305-8f47ff024640",
+                          "step": "if-child",
+                          "children": [
+                            {
+                              "id": "737c81f2-5146-439c-8ae4-40c15b321677",
+                              "step": "asset",
+                              "ticker": "QQQ"
+                            }
+                          ],
+                          "is-else-condition?": false,
+                          "lhs-fn": "cumulative-return",
+                          "lhs-fn-params": {
+                            "window": 21
+                          },
+                          "lhs-val": "QQQ",
+                          "comparator": "gt",
+                          "rhs-fixed-value?": true,
+                          "rhs-val": "0"
+                        },
+                        {
+                          "id": "89980512-a3ad-4fcb-8a9b-e2139e5c7711",
+                          "step": "if-child",
+                          "children": [
+                            {
+                              "id": "4a1bed38-f5de-4f93-997f-d6cb50c710d8",
+                              "step": "asset",
+                              "ticker": "SHV"
+                            }
+                          ],
+                          "is-else-condition?": true
+                        }
+                      ]
+                    }
+                  ],
+                  "is-else-condition?": false,
+                  "lhs-fn": "cumulative-return",
+                  "lhs-fn-params": {
+                    "window": 21
+                  },
+                  "lhs-val": "TIP",
+                  "comparator": "gt",
+                  "rhs-fixed-value?": true,
+                  "rhs-val": "0"
+                },
+                {
+                  "id": "f5aef049-b9d3-4855-a1bd-43abba29b445",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "74c2b2f1-13d9-44e5-ae44-e0dc8a8351b8",
+                      "step": "asset",
+                      "ticker": "SHV"
+                    }
+                  ],
+                  "is-else-condition?": true
+                }
+              ]
+            },
+            {
+              "id": "8deeb419-742c-4634-94b2-a12ab791b88a",
+              "step": "if",
+              "children": [
+                {
+                  "id": "408e5967-ffd5-4dd5-890e-b4f2bb60c286",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "f90d19da-42df-4674-8e2f-1fedf08a0f58",
+                      "step": "asset",
+                      "ticker": "TLT"
+                    }
+                  ],
+                  "is-else-condition?": false,
+                  "lhs-fn": "cumulative-return",
+                  "lhs-fn-params": {
+                    "window": 21
+                  },
+                  "lhs-val": "TLT",
+                  "comparator": "gt",
+                  "rhs-fixed-value?": true,
+                  "rhs-val": "0"
+                },
+                {
+                  "id": "01740757-d8a8-4129-824a-dbb1adee1d11",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "da028271-c049-4ff7-9560-bb6722ceb3b2",
+                      "step": "asset",
+                      "ticker": "SHV"
+                    }
+                  ],
+                  "is-else-condition?": true
+                }
+              ]
+            },
+            {
+              "id": "56052d2d-ac5c-464e-b7ae-12a371927a0e",
+              "step": "if",
+              "children": [
+                {
+                  "id": "38615688-c3bc-45aa-9a40-8d9c62e59348",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "86d8bd03-37f1-4cbb-8e30-287567f92760",
+                      "step": "asset",
+                      "ticker": "DBC"
+                    }
+                  ],
+                  "is-else-condition?": false,
+                  "lhs-fn": "cumulative-return",
+                  "lhs-fn-params": {
+                    "window": 21
+                  },
+                  "lhs-val": "DBC",
+                  "comparator": "gt",
+                  "rhs-fixed-value?": true,
+                  "rhs-val": "0"
+                },
+                {
+                  "id": "14b48bba-9257-474a-b870-d8510470a198",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "f5522323-9404-44df-88f2-09afa19cb2ac",
+                      "step": "asset",
+                      "ticker": "SHV"
+                    }
+                  ],
+                  "is-else-condition?": true
+                }
+              ]
+            },
+            {
+              "id": "6057fb22-0cab-4e50-9dbe-34a0785d2099",
+              "step": "if",
+              "children": [
+                {
+                  "id": "d5d1f477-42b3-47cf-be9f-ce8d2a2802aa",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "2b1481f8-b4ba-457c-9db7-ae95752e655a",
+                      "step": "asset",
+                      "ticker": "GLD"
+                    }
+                  ],
+                  "is-else-condition?": false,
+                  "lhs-fn": "cumulative-return",
+                  "lhs-fn-params": {
+                    "window": 21
+                  },
+                  "lhs-val": "GLD",
+                  "comparator": "gt",
+                  "rhs-fixed-value?": true,
+                  "rhs-val": "0"
+                },
+                {
+                  "id": "0cf7aaf1-16b6-4574-a2cf-2f760af8b334",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "daf7de84-e66f-402d-b9bd-0ecbe41db68b",
+                      "step": "asset",
+                      "ticker": "SHV"
+                    }
+                  ],
+                  "is-else-condition?": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "39916336-6461-4857-9b0d-3892d8bdefad",
+          "step": "wt-cash-equal",
+          "children": [
+            {
+              "id": "63b0908f-23b8-4976-b7be-03f0f20a33ab",
+              "step": "if",
+              "children": [
+                {
+                  "id": "dda93b0c-5597-4d37-996b-f3e61151ab64",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "91cd678b-63b3-4e68-8853-045f8cf5fc66",
+                      "step": "if",
+                      "children": [
+                        {
+                          "id": "08cf6c27-77f1-496b-9d80-fcbbc57181e4",
+                          "step": "if-child",
+                          "children": [
+                            {
+                              "id": "866a2c25-628d-4395-9373-d98ae0c577d4",
+                              "step": "asset",
+                              "ticker": "QQQ"
+                            }
+                          ],
+                          "is-else-condition?": false,
+                          "lhs-fn": "cumulative-return",
+                          "lhs-fn-params": {
+                            "window": 21
+                          },
+                          "lhs-val": "QQQ",
+                          "comparator": "gt",
+                          "rhs-fixed-value?": true,
+                          "rhs-val": "0"
+                        },
+                        {
+                          "id": "854956cd-ab3a-49ca-a577-99a3d6cf532a",
+                          "step": "if-child",
+                          "children": [
+                            {
+                              "id": "dc28e2ad-dbef-4816-8928-5257088e9a9f",
+                              "step": "asset",
+                              "ticker": "SHV"
+                            }
+                          ],
+                          "is-else-condition?": true
+                        }
+                      ]
+                    }
+                  ],
+                  "is-else-condition?": false,
+                  "lhs-fn": "cumulative-return",
+                  "lhs-fn-params": {
+                    "window": 21
+                  },
+                  "lhs-val": "TIP",
+                  "comparator": "gt",
+                  "rhs-fixed-value?": true,
+                  "rhs-val": "0"
+                },
+                {
+                  "id": "b0172cf1-dd8f-4c1d-add8-ff60143423b9",
+                  "step": "if-child",
+                  "children": [
+                    {
+                      "id": "748fadd7-9e33-4430-8a13-b5e2d9a9caf2",
+                      "step": "asset",
+                      "ticker": "SHV"
+                    }
+                  ],
+                  "is-else-condition?": true
+                }
+              ]
+            },
+            {
+              "id": "1d9f80e9-7921-4eea-bce8-731a97021a1e",
+              "step": "wt-cash-equal",
+              "children": [
+                {
+                  "id": "94e3e4f4-0dfb-4acd-b0f9-b1f9ba2be0a4",
+                  "step": "if",
+                  "children": [
+                    {
+                      "id": "e7f2cbb0-20d4-4d0d-b94a-3f45c52b8c0a",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "99f6c0b9-70cd-487a-8904-a934185d8f2b",
+                          "step": "if",
+                          "children": [
+                            {
+                              "id": "2a40f860-d76e-49bc-b110-df8a65cc8291",
+                              "step": "if-child",
+                              "children": [
+                                {
+                                  "id": "5a53bf99-8d27-4de3-9086-0e68ae422f57",
+                                  "step": "asset",
+                                  "ticker": "QQQ"
+                                }
+                              ],
+                              "is-else-condition?": false,
+                              "lhs-fn": "cumulative-return",
+                              "lhs-fn-params": {
+                                "window": 21
+                              },
+                              "lhs-val": "QQQ",
+                              "comparator": "gt",
+                              "rhs-fixed-value?": true,
+                              "rhs-val": "0"
+                            },
+                            {
+                              "id": "415c0d6b-01f2-46b8-982e-b6a685032f7f",
+                              "step": "if-child",
+                              "children": [
+                                {
+                                  "id": "27c82838-1860-4c4a-bacc-4c3585dc7c1a",
+                                  "step": "asset",
+                                  "ticker": "SHV"
+                                }
+                              ],
+                              "is-else-condition?": true
+                            }
+                          ]
+                        }
+                      ],
+                      "is-else-condition?": false,
+                      "lhs-fn": "cumulative-return",
+                      "lhs-fn-params": {
+                        "window": 21
+                      },
+                      "lhs-val": "TIP",
+                      "comparator": "gt",
+                      "rhs-fixed-value?": true,
+                      "rhs-val": "0"
+                    },
+                    {
+                      "id": "9381a06d-2d57-44c5-999d-e69df408de5c",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "d57174a2-f3bd-40c3-b819-1a5cea29e6e1",
+                          "step": "asset",
+                          "ticker": "SHV"
+                        }
+                      ],
+                      "is-else-condition?": true
+                    }
+                  ]
+                },
+                {
+                  "id": "78e080f4-fd0d-4bd4-b45e-2fca212c9916",
+                  "step": "if",
+                  "children": [
+                    {
+                      "id": "3c9461d1-f0e2-4761-843c-58eb84a5d98e",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "0ff0688b-5d84-4b72-9664-e71321f6c5c4",
+                          "step": "asset",
+                          "ticker": "TLT"
+                        }
+                      ],
+                      "is-else-condition?": false,
+                      "lhs-fn": "cumulative-return",
+                      "lhs-fn-params": {
+                        "window": 21
+                      },
+                      "lhs-val": "TLT",
+                      "comparator": "gt",
+                      "rhs-fixed-value?": true,
+                      "rhs-val": "0"
+                    },
+                    {
+                      "id": "c4b2e99e-b837-4ff1-83bf-09c9970b2f1d",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "1455e945-c719-4755-a507-172366102cdd",
+                          "step": "asset",
+                          "ticker": "SHV"
+                        }
+                      ],
+                      "is-else-condition?": true
+                    }
+                  ]
+                },
+                {
+                  "id": "ebdb5d94-fbc5-4d4b-bf3f-284be444300a",
+                  "step": "if",
+                  "children": [
+                    {
+                      "id": "dd77d2ca-a2a6-4e86-974c-c54963ab9a85",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "d69bdb80-ea70-45e7-b481-a2adfe49007f",
+                          "step": "asset",
+                          "ticker": "DBC"
+                        }
+                      ],
+                      "is-else-condition?": false,
+                      "lhs-fn": "cumulative-return",
+                      "lhs-fn-params": {
+                        "window": 21
+                      },
+                      "lhs-val": "DBC",
+                      "comparator": "gt",
+                      "rhs-fixed-value?": true,
+                      "rhs-val": "0"
+                    },
+                    {
+                      "id": "97f24144-a8fe-4770-b99c-0c9ae8f99018",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "8b64cc7b-da48-41bf-b8b4-92114193f789",
+                          "step": "asset",
+                          "ticker": "SHV"
+                        }
+                      ],
+                      "is-else-condition?": true
+                    }
+                  ]
+                },
+                {
+                  "id": "8e3e34c4-ad6d-4134-9e2e-cd2fc059f7cc",
+                  "step": "if",
+                  "children": [
+                    {
+                      "id": "a63a3251-aabe-45f5-b566-b9ba64a3931d",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "d9a92f7d-5936-4d65-913d-7588946453d5",
+                          "step": "asset",
+                          "ticker": "GLD"
+                        }
+                      ],
+                      "is-else-condition?": false,
+                      "lhs-fn": "cumulative-return",
+                      "lhs-fn-params": {
+                        "window": 21
+                      },
+                      "lhs-val": "GLD",
+                      "comparator": "gt",
+                      "rhs-fixed-value?": true,
+                      "rhs-val": "0"
+                    },
+                    {
+                      "id": "6bdb6cff-3f1e-4b4a-8327-457db15981d6",
+                      "step": "if-child",
+                      "children": [
+                        {
+                          "id": "4e359e53-f39d-4118-a736-54dcb73577a2",
+                          "step": "asset",
+                          "ticker": "SHV"
+                        }
+                      ],
+                      "is-else-condition?": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "description": "Adaptacion a Composer de CENTINELA. Momentum 13612W aproximado por cumulative-return 21d (single window). Canario TIP. Rebalanceo semanal (o threshold ~8%). Backtestear EN Composer: los numeros de TradingView (Sharpe 1.41) NO transfieren 1:1. github.com/manumartinb/centinela-taa",
+  "rebalance": "weekly"
+}
