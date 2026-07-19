@@ -134,18 +134,23 @@ momentum sacan la cartera a defensivos/liquidez antes de lo peor.
 El combo tiene mejor Sharpe, menor caída y mejor Calmar que **cualquiera** de sus
 componentes por separado: la diversificación de *estilos de decisión* es real.
 
-### ¿Por qué estos 6 activos? (el caso de DBC)
+### ¿Por qué estos 6 activos? (el aporte de cada pieza)
 
-Pregunta frecuente: *"DBC ha rendido regular toda su vida, ¿por qué lo tenemos?"*.
-Porque el combo **no lo compra-y-mantiene: lo cronometra**. DBC solo se carga
-cuando su momentum es positivo, y ahí rinde +7.9%/año (vs 5.8% de media). Es un
-seguro de inflación: cuesta un puntito en los años buenos, pero en 2022 —cuando
-la bolsa hizo −18% y los bonos cayeron con ella— fue **la única pata en verde**.
+Cada activo del combo pasó por un estudio **leave-one-out**: se simula la
+estrategia SIN él (peso reasignado a su sustituto natural) y se mide qué se
+pierde. El ejemplo estrella es DBC: como inversión pasiva es flojo (5.8%/año),
+pero el combo **no lo compra-y-mantiene: lo cronometra** (+7.4%/año en los días
+en que lo tiene), y en 2022 —cuando bolsa y bonos cayeron a la vez— fue **la
+única pata en verde**: quitarlo empeora el peor año en 2.9 pp.
 
-![Aporte de DBC por año](charts/dbc_contribution.png)
+![Aporte de cada activo por año](charts/asset_contribution.png)
 
-Quitarlo empeora el peor año en 2.9 pp. Análisis completo (y por qué **TLT** sí es
-el activo marginal): **[docs/POR_QUE_ESTOS_ACTIVOS.md](docs/POR_QUE_ESTOS_ACTIVOS.md)**.
+Resumen del estudio completo: **GLD es el defensivo MVP** (+1.4 pp CAGR y +0.08
+Sharpe, el mayor de todos), QQQ es el motor (+1.6 pp CAGR con riesgo intacto),
+SPY estabiliza (cede 1.2 pp por −2.5 pp de MaxDD), SHV es carry gratis (+0.6 pp),
+el canario TIP vale +0.13 Sharpe y medio peor-año… y **TLT es el único marginal**
+(quitarlo mejora in-sample; se mantiene como seguro de deflación). Análisis
+completo: **[docs/POR_QUE_ESTOS_ACTIVOS.md](docs/POR_QUE_ESTOS_ACTIVOS.md)**.
 
 ---
 
@@ -248,7 +253,7 @@ centinela-taa/
 │   ├── FORMULA.md             ← fórmula completa paso a paso
 │   ├── ROBUSTEZ.md            ← batería estadística completa
 │   ├── REBALANCEO.md          ← guía de rebalanceo con todas las tablas
-│   ├── POR_QUE_ESTOS_ACTIVOS.md ← el caso de DBC (y por qué TLT es el marginal)
+│   ├── POR_QUE_ESTOS_ACTIVOS.md ← aporte de cada activo (LOO de los 6 + canario TIP)
 │   ├── COMPOSER.md            ← port a Composer Trade (límites y guía)
 │   └── CICLO_COMPLETO.md      ← la prueba de fuego: 2008-2026 + 685 retadoras (LEER)
 ├── composer/

@@ -1,8 +1,10 @@
-# ¿Por qué estos 6 activos? — el caso de DBC (materias primas)
+# ¿Por qué estos 6 activos? — el aporte de cada pieza
 
-Una pregunta razonable y frecuente: **"DBC ha rendido regular toda su vida. ¿Por
-qué lo tenemos en el combo si no gana?"** La respuesta es un buen ejemplo de la
-filosofía de toda la estrategia, así que merece su propia página.
+Este estudio empezó con una pregunta razonable sobre DBC (*"ha rendido regular toda
+su vida, ¿por qué lo tenemos?"*) y acabó convertido en un **análisis leave-one-out
+de los 6 activos** del combo, más el canario TIP. La primera mitad cuenta el caso
+DBC (el ejemplo perfecto de la filosofía de la estrategia); la segunda aplica
+exactamente el mismo estudio a todas las piezas.
 
 ## 1. Es verdad: DBC solo es mediocre
 
@@ -22,14 +24,16 @@ aporta" es correcta… **para comprar-y-mantener**.
 
 CENTINELA solo carga DBC cuando su momentum es positivo. Y ese filtro funciona:
 
-> **DBC durante los periodos en que el combo lo tiene: +7.9%/año**
+> **DBC durante los días en que el combo lo tiene en cartera: +7.4%/año**
 > DBC en general (siempre): +5.8%/año
 
 El momentum le pilla las buenas rachas (inflación, tensión de oferta) y esquiva
 los tramos muertos. Convierte un activo del montón en uno que suma.
 
-Cuánto pesa en la práctica: peso medio **7.8%**, mediana 6.2%, máximo 25.8%. No es
-una posición grande — es un seguro modesto que se agranda cuando toca.
+Cuánto pesa en la práctica (peso *realmente mantenido* cada día, no el objetivo):
+medio **7.8%**, máximo 26.9%; está en cartera el 76% de los días con un peso medio
+del 10.2% cuando está. No es una posición grande — es un seguro modesto que se
+agranda cuando toca.
 
 ## 3. Efecto neto en el combo: POSITIVO
 
@@ -43,7 +47,7 @@ banda 8%, neto 10 pb:
 | MaxDD | −9.1% | −8.9% |
 | **Peor año** | **−2.1%** | **−5.0%** |
 
-Quitarlo cuesta **−0.8 pp de CAGR** y, sobre todo, **empeora el peor año en 2.9 pp**.
+Quitarlo cuesta **−0.9 pp de CAGR** y, sobre todo, **empeora el peor año en 2.9 pp**.
 
 ## 4. El desglose que lo explica todo
 
@@ -80,26 +84,136 @@ Esa es la **diversificación de régimen**: metes un activo mediocre-de-media pe
 **descorrelacionado en las crisis**, y dejas que el momentum lo cargue solo cuando
 hace falta. El precio de ese seguro es un puntito en los años buenos. Barato.
 
-## 6. Contraste honesto: ¿cuál SÍ es prescindible? — TLT
+---
 
-Para que no parezca que defendemos todos los activos por igual: el análogo de este
-estudio para **TLT (bonos largos)** da el resultado opuesto. Quitar TLT **mejora**
-ligeramente el Sharpe (1.42 vs 1.41) sin apenas tocar el CAGR, porque en 2022 falló
-como refugio (cayó con la bolsa). TLT es el **verdadero candidato marginal**; DBC
-se paga su sitio.
+## 6. El mismo estudio, para los seis (y el canario)
 
-| Activo | ¿Aporta al combo? | Papel |
+Metodología idéntica al caso DBC, sobre los **pesos exactos** de la estrategia
+(semanal + banda 8%, neto 10 pb, leakage-free, 2015-03 → 2026-07, N=2.843 días).
+Para cada activo se simula el combo **SIN él**, reasignando su peso al sustituto
+natural:
+
+| Activo | Sustituto en el contrafactual "SIN" | Qué mide |
 |---|---|---|
-| QQQ, SPY | Sí (motor) | Retorno en régimen alcista |
-| SHV | Sí (ancla) | Refugio universal / liquidez |
-| **DBC** | **Sí (seguro inflación)** | El único verde en 2022 |
-| GLD | Sí (diversificador clave) | Descorrelación consistente |
-| TLT | Marginal | Seguro de crash deflacionario (2020), falló en 2022 |
+| TLT, DBC, GLD | → liquidez (SHV) | ¿Paga su sitio el defensivo? |
+| QQQ | → SPY | ¿Aporta el Nasdaq sobre el S&P? |
+| SPY | → QQQ | ¿Aporta el S&P sobre el Nasdaq? |
+| SHV | → cash al 0% (mismo peso, sin remunerar) | ¿Cuánto vale remunerar la liquidez? |
+| TIP (canario) | régimen sin canario (solo mom SPY / mom QQQ) | ¿Cuánto vale la señal? |
 
-**Conclusión:** se mantienen los 6. Si algún día se recorta por simplicidad, el
-candidato es TLT — nunca DBC.
+Dos avisos de honestidad: (a) la reasignación es mecánica — no re-ejecuta la
+selección por momentum sin ese activo — así que es un contrafactual conservador;
+para los defensivos se probó también la convención alternativa (reasignar
+proporcionalmente al resto del menú defensivo) y **ninguna conclusión cambia de
+signo**. (b) "Aporte por año" = retorno anual CON menos retorno anual SIN.
+
+## 7. Tabla resumen: qué pasa si quitas cada pieza
+
+Δ = CON − SIN (positivo = el activo suma al combo):
+
+| Activo | Papel | B&H CAGR / Sharpe | Cronometrado | Peso medio | ΔCAGR | ΔSharpe | Δ peor año |
+|---|---|---|---:|---:|---:|---:|---:|
+| QQQ | Motor de crecimiento | 19.2% / 0.91 | **25.0%** | 27% | **+1.6 pp** | −0.02 | +0.3 pp |
+| SPY | Motor estable | 13.8% / 0.82 | **21.4%** | 20% | −1.2 pp | **+0.05** | **+1.2 pp** |
+| SHV | Ancla remunerada | 2.0% / — | 2.0% | 29% | +0.6 pp | +0.07 | +0.2 pp |
+| TLT | Seguro de deflación | −1.2% / −0.01 | −1.4% | 7% | **−0.3 pp** | **−0.02** | **−1.0 pp** |
+| DBC | Seguro de inflación | 5.8% / 0.41 | 7.4% | 8% | +0.9 pp | +0.02 | **+2.9 pp** |
+| GLD | Diversificador | 11.4% / 0.75 | 13.3% | 9% | **+1.4 pp** | **+0.08** | +0.2 pp |
+| TIP* | Canario (solo señal) | — | — | 0% | +0.7 pp | **+0.13** | **+4.8 pp** |
+
+*"Cronometrado" = CAGR del activo solo en los días en que el combo lo tiene (peso >1%).
+TIP\* medido sobre la reconstrucción canónica (la señal no se puede re-ejecutar sobre
+los pesos propietarios); lo comparable es el delta interno CON vs SIN.*
+
+![Aporte de cada activo por año](../charts/asset_contribution.png)
+
+## 8. Veredicto pieza a pieza
+
+**QQQ — el motor que paga las facturas.** Cronometrado rinde un 25%/año (vs 19%
+siempre): el filtro canario le quita justo los tramos malos. Sustituirlo por SPY
+cuesta **−1.6 pp de CAGR** con Sharpe y MaxDD casi idénticos: es retorno casi
+gratis. Sus rescates: +6.7 pp en 2020 y +6.9 pp en 2023. Curiosidad: el combo sin
+QQQ *ni* SPY (todo a liquidez) tendría Sharpe 1.54… con CAGR 7.4% — calidad sin
+crecimiento, el mismo perfil que las campañas de reconfirmación descartaron por
+no llegar al suelo de crecimiento (ver [CICLO_COMPLETO.md](CICLO_COMPLETO.md) §3).
+
+**SPY — el estabilizador del motor.** La pregunta simétrica: ¿por qué no todo QQQ?
+Porque todo-QQQ gana +1.2 pp más de CAGR pero **empeora el Sharpe (1.36 vs 1.41),
+profundiza el MaxDD a −11.6% y el peor año a −3.3%**. SPY diversifica el riesgo de
+motor (2022: aportó +1.5 pp justo cuando el Nasdaq sangraba). En un perfil
+conservador, ese intercambio — ceder 1.2 pp por dormir mejor — es exactamente el
+contrato de la estrategia. Y cronometrado (solo en RISK-ON) rinde 21.4%/año vs
+13.8% siempre: el régimen funciona.
+
+**SHV — el carry gratis.** Comparado con dejar la liquidez sin remunerar, SHV
+añade **+0.6 pp de CAGR y +0.07 de Sharpe** sin coste alguno. Su aporte crece con
+los tipos: +2.3 pp en 2023. Con un peso medio del 29% (es el ancla del RISK-OFF y
+del menú defensivo), remunerarlo no es un detalle — es la diferencia entre
+"esperar" y "cobrar por esperar".
+
+**TLT — el marginal, confirmado y cuantificado.** El único activo cuya retirada
+**mejora todo in-sample**: +0.3 pp de CAGR, +0.02 de Sharpe y peor año −1.1% vs
+−2.1% (robusto a las dos convenciones de reasignación). Ni el timing lo rescata
+(−1.4%/año incluso cronometrado): el momentum no puede salvar a un activo en
+mercado bajista estructural (subida de tipos 2021–2026, aporte negativo seis años
+seguidos). ¿Por qué sigue? Por el argumento simétrico al de DBC: TLT es el seguro
+del **crash deflacionario** (aportó +1.9 en 2019 y +2.2 en 2020), y la ventana
+2015–2026 contiene **dos episodios inflacionarios y solo uno deflacionario** — la
+muestra está sesgada contra TLT igual que estaba sesgada a favor de DBC. Echarlo
+por perder en *esta* muestra sería exactamente el error de ajustarse al régimen
+que este documento desaconseja. En el ciclo completo 2008–2026 (ver
+[CICLO_COMPLETO.md](CICLO_COMPLETO.md)), la década 2008–2017 fue el escenario
+donde los bonos largos se ganaron el sueldo.
+
+**GLD — el defensivo MVP (el hallazgo del estudio).** El título de "diversificador
+clave" se queda corto: GLD tiene el **mayor ΔSharpe de todos los activos (+0.08)**
+y +1.4 pp de CAGR, con solo un 9% de peso medio. Está en cartera el 90% de los
+días, cronometrado rinde 13.3%/año, y sus aportes son grandes *y frecuentes*:
++2.1 (2019), +2.9 (2020), +1.4 (2023), +2.5 (2024), **+6.5 (2025)**, +2.1 (2026).
+Sus peores años le cuestan al combo menos de 1 pp. Es la pieza defensiva más
+valiosa del combo: aporta en crisis deflacionarias (2020), inflacionarias (2022+)
+y en rallies del oro (2024–25). Quitarlo también empeora el MaxDD (−9.8% vs −9.1%).
+
+## 9. El canario TIP: la señal que no se ve en la cartera
+
+TIP nunca pesa un dólar en la cartera, pero su momentum decide el RISK-ON/OFF
+(junto a SPY) y activa el motor QQQ. Ablación de la señal sobre la reconstrucción
+canónica (mismo universo, mismas reglas, canario apagado):
+
+| | CON canario TIP | SIN canario |
+|---|---:|---:|
+| CAGR | 14.8% | 14.2% |
+| Sharpe | **1.31** | 1.17 |
+| MaxDD | **−16.9%** | −18.5% |
+| **Peor año** | **−4.2%** | **−9.0%** |
+
+El canario es el **interruptor de protección**: +9.9 pp en 2022 y +7.1 pp en 2018
+(los dos bears de tipos), a cambio de whipsaws en años alcistas (−7.3 en 2017,
+−4.0 en 2024). Neto: +0.13 de Sharpe y peor año a la mitad. La inflación esperada
+(que es lo que TIP añade sobre un bono nominal) resulta ser un termómetro de
+régimen que el precio del propio SPY no da.
+
+## 10. Conclusión: se quedan los seis (y ahora sabemos por qué cada uno)
+
+| Activo | ¿Se paga su sitio? | Su trabajo |
+|---|---|---|
+| QQQ | **Sí** (+1.6 pp CAGR) | Crecer en RISK-ON |
+| SPY | **Sí** (+0.05 Sharpe, mejor peor año) | Estabilizar el motor |
+| SHV | **Sí** (+0.6 pp gratis) | Cobrar por esperar |
+| **GLD** | **Sí — el MVP defensivo** (+1.4 pp, +0.08 Sharpe) | Diversificar en todo régimen |
+| **DBC** | **Sí — seguro de inflación** (peor año −2.1 vs −5.0) | El único verde en 2022 |
+| TLT | **Marginal** (−0.3 pp in-sample) | Seguro de deflación — pagó en 2019–20, sesgo de muestra en contra |
+| TIP | **Sí — como señal** (+0.13 Sharpe) | Detectar el cambio de régimen |
+
+**Conclusión operativa:** se mantienen los 6 + canario. Si algún día se recorta
+por simplicidad, el candidato sigue siendo TLT — nunca DBC ni GLD — y aun así el
+estudio recomienda no hacerlo: su prima de seguro (−0.3 pp/año) es barata para el
+único régimen (deflación con crash) contra el que nada más del menú protege tan
+directamente.
 
 ---
 
-*Reproducible con `scripts/backtest_taa.py` + `scripts/apr_combo.py` sobre
-`data/etf_adjclose.csv`. Ver también [ROBUSTEZ.md](ROBUSTEZ.md) §6.*
+*Reproducible con `scripts/estudio_aporte_activos.py` (motor: `scripts/apr_combo.py`
++ `scripts/backtest_taa.py`) sobre `data/etf_adjclose.csv`. Resultados numéricos en
+`data/asset_study_summary.csv`. Ver también [ROBUSTEZ.md](ROBUSTEZ.md) §6 y el
+contexto de ciclo completo en [CICLO_COMPLETO.md](CICLO_COMPLETO.md).*
