@@ -74,6 +74,19 @@ Este repo pretende convencer **con la verdad**, así que primero lo que CENTINEL
 **El framing correcto:** "rentabilidad ~equity con un tercio del drawdown y
 recuperaciones el doble de rápidas", no "gana siempre a la bolsa".
 
+### Y el matiz aún más importante: el ciclo completo (2008–2026)
+
+Los números de arriba son de 2015–2026, un periodo amable. Extendida a **19 años con
+la crisis de 2008 dentro**, la expectativa honesta es: **CAGR ~10% · Sharpe ~0.9 ·
+caídas de hasta −17% · posibles 3-4 años mediocres seguidos** (2010–2013). A cambio:
+en 2008 hizo **+9%** mientras el SPY caía −51% peak-to-trough, y su Sharpe de ciclo
+completo (0.94) sigue aplastando al del SPY (0.66). Además, **sobrevivió a 685
+configuraciones retadoras** en dos campañas de búsqueda masiva pre-registradas sin
+que ninguna la batiera. Detalle completo, gráficos y campañas:
+**[docs/CICLO_COMPLETO.md](docs/CICLO_COMPLETO.md)** ← *léelo antes de invertir*.
+
+![Ciclo completo](charts/fullcycle.png)
+
 ---
 
 ## 4. Las crisis: donde se gana el nombre
@@ -236,7 +249,8 @@ centinela-taa/
 │   ├── ROBUSTEZ.md            ← batería estadística completa
 │   ├── REBALANCEO.md          ← guía de rebalanceo con todas las tablas
 │   ├── POR_QUE_ESTOS_ACTIVOS.md ← el caso de DBC (y por qué TLT es el marginal)
-│   └── COMPOSER.md            ← port a Composer Trade (límites y guía)
+│   ├── COMPOSER.md            ← port a Composer Trade (límites y guía)
+│   └── CICLO_COMPLETO.md      ← la prueba de fuego: 2008-2026 + 685 retadoras (LEER)
 ├── composer/
 │   └── CENTINELA_symphony.json ← symphony importable en Composer (aproximación)
 ├── charts/                    ← 9 gráficos (generados por scripts/make_charts_repo.py)

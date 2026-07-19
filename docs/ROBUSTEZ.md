@@ -1,5 +1,10 @@
 # Batería de robustez de CENTINELA — detalle completo
 
+> **Actualización 2026-07:** CENTINELA fue además sometida a la prueba máxima — dos
+> campañas pre-registradas de búsqueda masiva (685 configuraciones retadoras, 25 ETFs,
+> 19 años con la GFC incluida, con Deflated Sharpe Ratio y ledger anti data-mining) —
+> y **ninguna retadora la batió**. Ver [CICLO_COMPLETO.md](CICLO_COMPLETO.md).
+
 Todo lo que se hizo para intentar **tumbar** la estrategia antes de darla por buena.
 Configuración evaluada: pesos exactos, chequeo semanal (primer día ISO) + banda 8%,
 neto 10 pb por rotación, ventana 2015-03 → 2026-07 (N=2.843 días).
